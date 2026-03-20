@@ -27,6 +27,78 @@ function getDomainFromUrl(url) {
   }
 }
 
+/**
+ * Common logic to inject a set of cookies into the browser.
+ * Ensures security flags (Secure, HttpOnly, SameSite) and forces session persistence.
+ */
+async function injectCookies(cookies, domain) {
+  for (const c of cookies) {
+    // Determine the precise URL for this specific cookie's domain and path
+    const protocol = c.secure ? "https:" : "http:";
+    const cleanDomain = c.domain.startsWith('.') ? c.domain.substring(1) : c.domain;
+    const url = `${protocol}//${cleanDomain}${c.path}`;
+
+    const isSecureUrl = protocol === "https:";
+    const lowerName = c.name.toLowerCase();
+    // Keywords that suggest a sensitive authentication/session cookie
+    const isSensitive = lowerName.includes('session') || 
+                        lowerName.includes('token') || 
+                        lowerName.includes('sid') || 
+                        lowerName.includes('auth') || 
+                        lowerName.includes('jwt') ||
+                        lowerName.includes('sid');
+
+    const newCookie = {
+      url: url,
+      name: c.name,
+      value: c.value,
+      path: c.path,
+      // Hardening: Force Secure on HTTPS, and Force HttpOnly for potential session tokens
+      // This protects them from being stolen by malicious scripts (XSS).
+      secure: c.secure || isSecureUrl,
+      httpOnly: c.httpOnly || isSensitive,
+      // If sameSite is not specified, default to Lax for CSRF protection
+      sameSite: (c.sameSite && c.sameSite !== 'unspecified') ? c.sameSite : 'lax',
+      // If it's a session cookie (no expiration), force it to persist for 1 year
+      // This ensures sessions survive browser restarts/shutdowns.
+      expirationDate: (c.expirationDate) ? c.expirationDate : (Date.now() / 1000) + (60 * 60 * 24 * 365),
+    };
+
+
+    if (!c.hostOnly) {
+      newCookie.domain = c.domain;
+    }
+
+    // Wait for each cookie to be set safely
+    await chrome.cookies.set(newCookie).catch(err => {
+      console.warn(`Failed to set cookie ${c.name} for ${domain}:`, err);
+    });
+  }
+}
+
+/**
+ * Restores all active sessions on browser startup.
+ */
+chrome.runtime.onStartup.addListener(async () => {
+  console.log("Browser startup detected. Restoring active Persona sessions...");
+  try {
+    const data = await chrome.storage.local.get(["globalAccounts", "activeSessions"]);
+    const accounts = data.globalAccounts || [];
+    const activeSessions = data.activeSessions || {};
+
+    for (const [domain, accountId] of Object.entries(activeSessions)) {
+      const activeAccount = accounts.find(acc => acc.id === accountId);
+      if (activeAccount && activeAccount.cookies) {
+        console.log(`Restoring session for ${domain} (${activeAccount.email})...`);
+        await injectCookies(activeAccount.cookies, domain);
+      }
+    }
+  } catch (error) {
+    console.error("Failed to restore sessions on startup:", error);
+  }
+});
+
+
 // Listen for messages from Popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "SAVE_SESSION") {
@@ -192,39 +264,12 @@ async function handleSwitchSession(payload, sendResponse) {
 
     const domain = targetAccount.domain;
 
-    // 1. CLEARING REMOVED: We now "Merge" cookies instead of replacing.
-    // This prevents logging out other accounts in the same profile (e.g. Google multi-login).
-    // The previously existing 'removalPromises' section has been removed to support this.
+    // 1. Inject SAVED cookies (Merging) using the hardened helper
+    await injectCookies(targetAccount.cookies, domain);
 
-    // 2. Inject SAVED cookies (Merging)
-    for (const c of targetAccount.cookies) {
-      // Build a precise URL for this specific cookie's domain and path
-      const protocol = c.secure ? "https:" : "http:";
-      const cleanDomain = c.domain.startsWith('.') ? c.domain.substring(1) : c.domain;
-      const url = `${protocol}//${cleanDomain}${c.path}`;
+    // 2. Propagation Delay: Wait for cookies to "settle" in the browser state
+    await new Promise(resolve => setTimeout(resolve, 800));
 
-      const newCookie = {
-        url: url,
-        name: c.name,
-        value: c.value,
-        path: c.path,
-        secure: c.secure,
-        httpOnly: c.httpOnly,
-        sameSite: c.sameSite,
-        // If it's a session cookie (no expiration), force it to persist for 1 year to avoid accidental signouts
-        expirationDate: (c.expirationDate) ? c.expirationDate : (Date.now() / 1000) + (60 * 60 * 24 * 365),
-      };
-
-      if (!c.hostOnly) {
-        newCookie.domain = c.domain;
-      }
-
-      // Wait for each cookie to be set safely
-      await chrome.cookies.set(newCookie).catch(err => console.warn(`Failed to set cookie ${c.name}:`, err));
-    }
-
-    // 3. Propagation Delay: Wait for cookies to "settle" in the browser state
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // 4. Reload active tabs for that domain and open a new window
     const tabs = await chrome.tabs.query({ url: `*://*.${domain}/*` });

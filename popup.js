@@ -55,15 +55,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 function showDetectionError(msg) {
   const container = document.querySelector('.app-container');
   if (container) {
-    container.innerHTML = `
-      <div style="padding:60px 20px; text-align:center; display:flex; flex-direction:column; gap:20px; align-items:center">
-        <div style="font-size:48px">🌐</div>
-        <div style="color:var(--text-secondary); line-height:1.6">${msg}</div>
-        <button onclick="window.location.reload()" class="btn outline" style="width:auto">Retry</button>
-      </div>
-    `;
+    container.textContent = ''; // Safe clear
+    const errorDiv = document.createElement('div');
+    errorDiv.style.padding = '60px 20px';
+    errorDiv.style.textAlign = 'center';
+    errorDiv.style.display = 'flex';
+    errorDiv.style.flexDirection = 'column';
+    errorDiv.style.gap = '20px';
+    errorDiv.style.alignItems = 'center';
+
+    const icon = document.createElement('div');
+    icon.style.fontSize = '48px';
+    icon.textContent = '🌐';
+    
+    const text = document.createElement('div');
+    text.style.color = 'var(--text-secondary)';
+    text.style.lineHeight = '1.6';
+    text.textContent = msg;
+
+    const retryBtn = document.createElement('button');
+    retryBtn.className = 'btn outline';
+    retryBtn.style.width = 'auto';
+    retryBtn.textContent = 'Retry';
+    retryBtn.onclick = () => window.location.reload();
+
+    errorDiv.appendChild(icon);
+    errorDiv.appendChild(text);
+    errorDiv.appendChild(retryBtn);
+    container.appendChild(errorDiv);
   }
 }
+
 
 async function renderAccounts() {
   const listEl = document.getElementById('account-list');
@@ -101,10 +123,16 @@ async function renderAccounts() {
 
     // List ALL global accounts consistently
     const otherAccounts = accounts.filter(acc => acc.id !== activeId);
-    listEl.innerHTML = '';
+    listEl.textContent = ''; // Safe clear
 
     if (otherAccounts.length === 0 && !activeAccount) {
-      listEl.innerHTML = '<div style="padding:24px; font-size:13px; color:var(--text-secondary); text-align:center">Your global account list is empty.</div>';
+      const emptyMsg = document.createElement('div');
+      emptyMsg.style.padding = '24px';
+      emptyMsg.style.fontSize = '13px';
+      emptyMsg.style.color = 'var(--text-secondary)';
+      emptyMsg.style.textAlign = 'center';
+      emptyMsg.textContent = 'Your global account list is empty.';
+      listEl.appendChild(emptyMsg);
     } else {
       otherAccounts.forEach(acc => {
         const el = document.createElement('div');
@@ -112,19 +140,40 @@ async function renderAccounts() {
         
         const avatarSrc = acc.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(acc.name)}&background=random&size=32`;
 
-        el.innerHTML = `
-          <img src="${avatarSrc}" class="avatar-small" alt="">
-          <div class="item-info">
-            <div class="item-name">${escapeHtml(acc.name)}</div>
-            <div class="item-email">${escapeHtml(acc.email || acc.domain)}</div>
-          </div>
-          <div style="font-size:10px; color:var(--text-secondary); margin-left:auto">${acc.domain}</div>
-        `;
+        const img = document.createElement('img');
+        img.src = avatarSrc;
+        img.className = 'avatar-small';
+        img.alt = '';
+
+        const info = document.createElement('div');
+        info.className = 'item-info';
+
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'item-name';
+        nameDiv.textContent = acc.name;
+
+        const emailDiv = document.createElement('div');
+        emailDiv.className = 'item-email';
+        emailDiv.textContent = acc.email || acc.domain;
+
+        info.appendChild(nameDiv);
+        info.appendChild(emailDiv);
+
+        const domainDiv = document.createElement('div');
+        domainDiv.style.fontSize = '10px';
+        domainDiv.style.color = 'var(--text-secondary)';
+        domainDiv.style.marginLeft = 'auto';
+        domainDiv.textContent = acc.domain;
+
+        el.appendChild(img);
+        el.appendChild(info);
+        el.appendChild(domainDiv);
 
         el.addEventListener('click', () => switchAccount(acc.id));
         listEl.appendChild(el);
       });
     }
+
   } catch (err) {
     console.error("Error rendering accounts:", err);
   }
@@ -181,13 +230,38 @@ async function openAddView() {
         detectedAuthuser = data.authuser;
         if (data.name) document.getElementById('input-name').value = data.name;
         if (detectedAvatar || detectedEmail) {
-          document.getElementById('preview-info').innerHTML = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:16px">
-              ${detectedAvatar ? `<img src="${detectedAvatar}" style="width:64px; height:64px; border-radius:50%; border:2px solid var(--google-blue)">` : ''}
-              <div style="font-size:13px; color:var(--text-secondary); font-weight:500">${detectedEmail || ''}</div>
-            </div>
-          `;
+          const previewInfo = document.getElementById('preview-info');
+          previewInfo.textContent = ''; // Safe clear
+          
+          const previewContainer = document.createElement('div');
+          previewContainer.style.display = 'flex';
+          previewContainer.style.flexDirection = 'column';
+          previewContainer.style.alignItems = 'center';
+          previewContainer.style.gap = '12px';
+          previewContainer.style.marginTop = '16px';
+
+          if (detectedAvatar) {
+            const img = document.createElement('img');
+            img.src = detectedAvatar;
+            img.style.width = '64px';
+            img.style.height = '64px';
+            img.style.borderRadius = '50%';
+            img.style.border = '2px solid var(--google-blue)';
+            previewContainer.appendChild(img);
+          }
+
+          if (detectedEmail) {
+            const emailDiv = document.createElement('div');
+            emailDiv.style.fontSize = '13px';
+            emailDiv.style.color = 'var(--text-secondary)';
+            emailDiv.style.fontWeight = '500';
+            emailDiv.textContent = detectedEmail;
+            previewContainer.appendChild(emailDiv);
+          }
+
+          previewInfo.appendChild(previewContainer);
         }
+
       }
     }
   } catch (e) {
@@ -199,7 +273,7 @@ function showMainView() {
   document.getElementById('add-view').classList.add('hidden');
   document.getElementById('main-view').classList.remove('hidden');
   document.getElementById('input-name').value = '';
-  document.getElementById('preview-info').innerHTML = '';
+  document.getElementById('preview-info').textContent = '';
 }
 
 async function saveAccount() {
@@ -253,7 +327,4 @@ async function signOutAll() {
   window.close();
 }
 
-function escapeHtml(text) {
-  if (!text) return text;
-  return text.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
-}
+
