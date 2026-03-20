@@ -8,10 +8,15 @@ It works by capturing the current session cookies and storing them locally. When
 
 - **Multi-Account Management**: Save multiple profiles for the same website (e.g., "Personal", "Work", "Dev").
 - **One-Click Switching**: Swap between accounts instantly without entering passwords again.
-- **Auto-Detection**: Automatically detects user details (Name, Email, Avatar) from the current page to label accounts easily.
-- **Add Account Flow**: Integrated button to open Google's "Add Session" page to easily sign in to new accounts.
+- **Startup Persistence**: Sessions automatically survive browser restarts, system shutdowns, and even crashes.
+- **Security Hardened**: 
+  - **Anti-XSS**: Refactored UI to eliminate `innerHTML` risks.
+  - **HttpOnly Assistance**: Automatically forces `HttpOnly` and `Secure` flags on authentication tokens during restoration.
+  - **CSRF Protection**: Implements `SameSite: Lax` by default for all injected cookies.
+  - **Strict CSP**: Enforces a strict Content Security Policy to prevent unauthorized script execution.
 - **Privacy Focused**: All data (cookies and tokens) is stored locally on your machine via `chrome.storage.local`. Nothing is sent to external servers.
 - **Material Design**: Clean, user-friendly interface inspired by Google's design system.
+
 
 ## 🛠️ Installation
 
@@ -56,7 +61,8 @@ This extension requires specific permissions to function:
 - **`storage`**: Used to save your account lists and active session IDs locally.
 - **`tabs` & `activeTab`**: Required to detect the current website domain and reload the page after switching accounts.
 - **`scripting`**: Used to safely inject a script into the page to scrape the user's name and avatar for the UI.
-- **`<all_urls>`**: **HIGH RISK** - Narrow to specific domains (see doc/refactored/manifest.json).
+- **`<all_urls>`**: Required to allow the extension to switch accounts on any website. This is hardened with a strict **Content Security Policy** and **HttpOnly Flag Assistance** to prevent session theft.
+
 
 ## 📂 Project Structure
 
