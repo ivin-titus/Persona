@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Persona - Google Style</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header: Domain/Site Name + Close -->
+    <header class="app-header">
+      <div id="current-domain" class="site-label">Site: Detect...</div>
+      <button id="btn-close" class="icon-btn close-btn" title="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </header>
+
+    <!-- Main View -->
+    <div id="main-view" class="view-content">
+      <!-- Active Profile Section -->
+      <section class="active-profile">
+        <div class="avatar-large-container">
+          <img id="active-avatar" src="persona.png" class="avatar-large" alt="Active Account">
+          <div class="camera-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+        </div>
+        <h2 id="active-name" class="greeting">Hi, User!</h2>
+        <div id="active-email" class="user-email-main">user@example.com</div>
+        <button id="btn-manage" class="btn outline rounded-full">Manage your Google Account</button>
+      </section>
+
+      <!-- Accounts Card -->
+      <div class="accounts-card-wrapper">
+        <section class="accounts-card">
+          <div id="account-list" class="account-list">
+            <!-- Injected via JS -->
+          </div>
+
+          <button id="btn-add-view" class="list-action">
+            <div class="action-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            </div>
+            <span>Add another account</span>
+          </button>
+
+          <button id="btn-signout" class="list-action signout-all">
+            <div class="action-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+            </div>
+            <span>Clear all saved accounts</span>
+          </button>
+        </section>
+      </div>
+    </div>
+
+    <!-- Add View -->
+    <div id="add-view" class="view-content hidden">
+      <div class="add-header">
+        <button id="btn-cancel" class="icon-btn" title="Back">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <span class="view-title">Save Current Session</span>
+      </div>
+
+      <div id="preview-info"></div>
+
+      <div class="form-body">
+        <div class="form-group">
+          <label for="input-name">Account Label</label>
+          <input type="text" id="input-name" placeholder="e.g. Work, Personal" autocomplete="off">
+        </div>
+
+        <button id="btn-save" class="btn primary full-width">Save Account</button>
+
+        <div class="helper-section">
+          <div class="helper-text">Need to sign in to a new account?</div>
+          <button id="btn-google-add" class="btn outline full-width">Open Google Sign In</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <!-- <footer class="app-footer">
+      <a href="#">Privacy Policy</a>
+      <span class="dot">•</span>
+      <a href="#">Terms of Service</a>
+    </footer>
+  </div> -->
+
+  <script src="popup.js"></script>
+</body>
+</html>

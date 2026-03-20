@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Persona - Multi Account Switcher",
+  "version": "1.0.0",
+  "description": "Switch between multiple accounts on any site easily.",
+  "permissions": [
+    "cookies",
+    "storage",
+    "tabs",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "icons": {
+    "16": "persona.png",
+    "32": "persona.png",
+    "48": "persona.png",
+    "128": "persona.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Persona Account Switcher",
+    "default_icon": "persona.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
