@@ -72,4 +72,4 @@ This tool is for educational and productivity purposes. Since it manipulates ses
 
 ---
 
-*Developed with ❤️*
+
