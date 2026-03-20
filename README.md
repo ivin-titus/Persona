@@ -25,6 +25,7 @@ Since this is a developer extension, you need to load it manually:
 4.  Click the **Load unpacked** button in the top-left.
 5.  Select the folder where you saved the extension files.
 6.  The extension icon should appear in your toolbar.
+7.  Pin the extension icon so you can use it.
 
 ## 📖 How to Use
 
