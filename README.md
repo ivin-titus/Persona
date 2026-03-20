@@ -49,13 +49,14 @@ Since this is a developer extension, you need to load it manually:
 
 ## 🔒 Permissions Explained
 
+
 This extension requires specific permissions to function:
 
 - **`cookies`**: Essential for reading the current session to save it and injecting saved cookies to switch accounts.
 - **`storage`**: Used to save your account lists and active session IDs locally.
 - **`tabs` & `activeTab`**: Required to detect the current website domain and reload the page after switching accounts.
 - **`scripting`**: Used to safely inject a script into the page to scrape the user's name and avatar for the UI.
-- **`<all_urls>`**: Necessary to allow the extension to manage cookies for any domain you visit.
+- **`<all_urls>`**: **HIGH RISK** - Narrow to specific domains (see doc/refactored/manifest.json).
 
 ## 📂 Project Structure
 
@@ -63,6 +64,8 @@ This extension requires specific permissions to function:
 - **`background.js`**: Service worker that handles the heavy lifting—saving cookies, clearing cookies, and swapping sessions.
 - **`popup.html` / `popup.js` / `popup.css`**: The user interface.
 - **`content.js`**: Script that runs on the web page to extract profile info (Avatar, Name, Email).
+
+
 
 ## ⚠️ Disclaimer
 

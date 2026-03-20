@@ -185,16 +185,16 @@ async function handleSwitchSession(payload, sendResponse) {
 
     // 1. Clear CURRENT cookies for THAT domain
     const currentCookies = await chrome.cookies.getAll({ domain: domain });
-    const removalPromises = currentCookies.map(c => {
+    // Serialize removal to prevent race conditions (SEC-07)
+    for (const c of currentCookies) {
       const protocol = c.secure ? "https:" : "http:";
       const cleanDomain = c.domain.startsWith('.') ? c.domain.substring(1) : c.domain;
       const url = `${protocol}//${cleanDomain}${c.path}`;
-      return chrome.cookies.remove({ url, name: c.name, storeId: c.storeId });
-    });
-    await Promise.all(removalPromises);
+      await chrome.cookies.remove({ url, name: c.name, storeId: c.storeId });
+    }
 
     // 2. Inject SAVED cookies
-    const injectionPromises = targetAccount.cookies.map(c => {
+    for (const c of targetAccount.cookies) {
       const protocol = c.secure ? "https:" : "http:";
       const cleanDomain = c.domain.startsWith('.') ? c.domain.substring(1) : c.domain;
       const url = `${protocol}//${cleanDomain}${c.path}`;
@@ -207,18 +207,19 @@ async function handleSwitchSession(payload, sendResponse) {
         secure: c.secure,
         httpOnly: c.httpOnly,
         sameSite: c.sameSite,
-        expirationDate: c.expirationDate,
-        storeId: c.storeId
+        // Fix for "Shutdown all account gone signout":
+        // If it's a session cookie (no expiration), force it to persist for 1 year.
+        expirationDate: (c.expirationDate) ? c.expirationDate : (Date.now() / 1000) + (60 * 60 * 24 * 365),
+        // Remove storeId to allow browser to assign to current context
       };
 
       if (!c.hostOnly) {
         newCookie.domain = c.domain;
       }
 
-      return chrome.cookies.set(newCookie).catch(err => console.warn(`Failed to set cookie ${c.name}:`, err));
-    });
-
-    await Promise.all(injectionPromises);
+      // Wait for each cookie to be set safely
+      await chrome.cookies.set(newCookie).catch(err => console.warn(`Failed to set cookie ${c.name}:`, err));
+    }
 
     // 3. Reload active tabs for that domain and open a new window
     const tabs = await chrome.tabs.query({ url: `*://*.${domain}/*` });
@@ -230,10 +231,11 @@ async function handleSwitchSession(payload, sendResponse) {
     });
 
     // 4. Update active state
-    const storage = await chrome.storage.local.get("activeSessions");
-    const activeSessions = storage.activeSessions || {};
-    activeSessions[domain] = accountId;
-    await chrome.storage.local.set({ activeSessions });
+    // Re-fetch in case it changed
+    const finalStorage = await chrome.storage.local.get("activeSessions");
+    const finalActiveSessions = finalStorage.activeSessions || {};
+    finalActiveSessions[domain] = accountId;
+    await chrome.storage.local.set({ activeSessions: finalActiveSessions });
 
     sendResponse({ success: true });
 
