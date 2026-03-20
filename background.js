@@ -92,7 +92,7 @@ async function handleClearCookies(domain, sendResponse) {
  * Captures cookies for the current domain and stores them in a GLOBAL list.
  */
 async function handleSaveSession(payload, sendResponse) {
-  const { name, domain, avatar, email } = payload;
+  const { name, domain, avatar, email, authuser } = payload;
   
   try {
     const cookies = await chrome.cookies.getAll({ domain: domain });
@@ -103,6 +103,7 @@ async function handleSaveSession(payload, sendResponse) {
       domain: domain,
       avatar: avatar || null,
       email: email || null,
+      authuser: authuser || null,
       timestamp: Date.now(),
       cookies: cookies
     };
@@ -191,19 +192,13 @@ async function handleSwitchSession(payload, sendResponse) {
 
     const domain = targetAccount.domain;
 
-    // 1. Clear CURRENT cookies for THAT domain
-    const currentCookies = await chrome.cookies.getAll({ domain: domain });
-    
-    const removalPromises = currentCookies.map(c => {
-      const protocol = c.secure ? "https:" : "http:";
-      const cleanDomain = c.domain.startsWith('.') ? c.domain.substring(1) : c.domain;
-      const url = `${protocol}//${cleanDomain}${c.path}`;
-      return chrome.cookies.remove({ url, name: c.name, storeId: c.storeId });
-    });
-    await Promise.all(removalPromises);
+    // 1. CLEARING REMOVED: We now "Merge" cookies instead of replacing.
+    // This prevents logging out other accounts in the same profile (e.g. Google multi-login).
+    // The previously existing 'removalPromises' section has been removed to support this.
 
-    // 2. Inject SAVED cookies
+    // 2. Inject SAVED cookies (Merging)
     for (const c of targetAccount.cookies) {
+      // Build a precise URL for this specific cookie's domain and path
       const protocol = c.secure ? "https:" : "http:";
       const cleanDomain = c.domain.startsWith('.') ? c.domain.substring(1) : c.domain;
       const url = `${protocol}//${cleanDomain}${c.path}`;
@@ -216,10 +211,8 @@ async function handleSwitchSession(payload, sendResponse) {
         secure: c.secure,
         httpOnly: c.httpOnly,
         sameSite: c.sameSite,
-        // Fix for "Shutdown all account gone signout":
-        // If it's a session cookie (no expiration), force it to persist for 1 year.
+        // If it's a session cookie (no expiration), force it to persist for 1 year to avoid accidental signouts
         expirationDate: (c.expirationDate) ? c.expirationDate : (Date.now() / 1000) + (60 * 60 * 24 * 365),
-        // Remove storeId to allow browser to assign to current context
       };
 
       if (!c.hostOnly) {
@@ -230,16 +223,32 @@ async function handleSwitchSession(payload, sendResponse) {
       await chrome.cookies.set(newCookie).catch(err => console.warn(`Failed to set cookie ${c.name}:`, err));
     }
 
-    // 3. Reload active tabs for that domain and open a new window
+    // 3. Propagation Delay: Wait for cookies to "settle" in the browser state
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // 4. Reload active tabs for that domain and open a new window
     const tabs = await chrome.tabs.query({ url: `*://*.${domain}/*` });
     tabs.forEach(tab => chrome.tabs.reload(tab.id));
 
+    // For Google domains, force the correct account using authuser index or Email hint
+    // And redirect specifically to www.google.com/webhp as requested by user
+    let targetUrl = `https://www.${domain}`;
+    if (domain === 'google.com') {
+      if (targetAccount.authuser !== null && targetAccount.authuser !== undefined) {
+        targetUrl = `https://www.google.com/webhp?authuser=${targetAccount.authuser}`;
+      } else if (targetAccount.email) {
+        targetUrl = `https://accounts.google.com/AccountChooser?Email=${encodeURIComponent(targetAccount.email)}&continue=${encodeURIComponent('https://www.google.com/webhp')}`;
+      } else {
+        targetUrl = `https://www.google.com/webhp`;
+      }
+    }
+
     chrome.windows.create({
-      url: `https://www.${domain}`,
+      url: targetUrl,
       focused: true
     });
 
-    // 4. Update active state
+    // 5. Update active state
     // Re-fetch in case it changed
     const finalStorage = await chrome.storage.local.get("activeSessions");
     const finalActiveSessions = finalStorage.activeSessions || {};

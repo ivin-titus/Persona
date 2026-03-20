@@ -24,13 +24,23 @@
     if (match) userEmail = match[0];
   }
 
+  // 4. Try to find authuser index (Google specific)
+  let authuser = null;
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('authuser')) {
+    authuser = urlParams.get('authuser');
+  } else {
+    const match = window.location.pathname.match(/\/u\/(\d+)/);
+    if (match) authuser = match[1];
+  }
+
   // 4. Fallback to Title
   userName = document.title.split('-')[0].split('|')[0].trim();
 
   // Listen for request from popup
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "EXTRACT_PROFILE_DATA") {
-      sendResponse({ avatar: avatarUrl, name: userName, email: userEmail });
+      sendResponse({ avatar: avatarUrl, name: userName, email: userEmail, authuser: authuser });
     }
   });
 })();

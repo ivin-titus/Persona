@@ -1,6 +1,7 @@
 let currentDomain = null;
 let detectedAvatar = null;
 let detectedEmail = null;
+let detectedAuthuser = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log("Popup loaded, detecting current tab...");
@@ -153,7 +154,8 @@ async function autoCaptureProfile() {
               name: data.name || "New Account", 
               domain: currentDomain, 
               avatar: data.avatar, 
-              email: data.email 
+              email: data.email,
+              authuser: data.authuser
             }
           });
           await renderAccounts();
@@ -176,6 +178,7 @@ async function openAddView() {
       if (data) {
         detectedAvatar = data.avatar;
         detectedEmail = data.email;
+        detectedAuthuser = data.authuser;
         if (data.name) document.getElementById('input-name').value = data.name;
         if (detectedAvatar || detectedEmail) {
           document.getElementById('preview-info').innerHTML = `
@@ -208,7 +211,13 @@ async function saveAccount() {
   try {
     await chrome.runtime.sendMessage({
       action: "SAVE_SESSION",
-      payload: { name, domain: currentDomain, avatar: detectedAvatar, email: detectedEmail }
+      payload: { 
+        name, 
+        domain: currentDomain, 
+        avatar: detectedAvatar, 
+        email: detectedEmail,
+        authuser: detectedAuthuser 
+      }
     });
     showMainView();
     await renderAccounts();
