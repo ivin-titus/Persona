@@ -10,6 +10,14 @@ function getDomainFromUrl(url) {
 
     const hostname = parsed.hostname;
     const parts = hostname.split('.');
+
+    // Handle country codes (e.g. google.co.uk)
+    if (parts.length > 2) {
+      const last = parts[parts.length - 1];
+      const secondLast = parts[parts.length - 2];
+      if (last.length === 2 && secondLast.length <= 3) return parts.slice(-3).join('.');
+    }
+
     if (parts.length >= 2) {
       return parts.slice(-2).join('.');
     }
@@ -185,13 +193,14 @@ async function handleSwitchSession(payload, sendResponse) {
 
     // 1. Clear CURRENT cookies for THAT domain
     const currentCookies = await chrome.cookies.getAll({ domain: domain });
-    // Serialize removal to prevent race conditions (SEC-07)
-    for (const c of currentCookies) {
+    
+    const removalPromises = currentCookies.map(c => {
       const protocol = c.secure ? "https:" : "http:";
       const cleanDomain = c.domain.startsWith('.') ? c.domain.substring(1) : c.domain;
       const url = `${protocol}//${cleanDomain}${c.path}`;
-      await chrome.cookies.remove({ url, name: c.name, storeId: c.storeId });
-    }
+      return chrome.cookies.remove({ url, name: c.name, storeId: c.storeId });
+    });
+    await Promise.all(removalPromises);
 
     // 2. Inject SAVED cookies
     for (const c of targetAccount.cookies) {
