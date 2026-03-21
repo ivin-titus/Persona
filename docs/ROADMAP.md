@@ -273,4 +273,4 @@ This roadmap is public and open to discussion. If you have strong opinions about
 
 If you want to work on a specific phase, check the issue tracker for issues tagged with the phase number.
 
-**→ [Open Issues](https://github.com/aswanidev-vs/persona/issues)** · **→ [Discussions](https://github.com/aswanidev-vs/persona/discussions)** · **→ [Contributing Guide].(./CONTRIBUTING.md)**
+**→ [Open Issues](https://github.com/aswanidev-vs/persona/issues)** · **→ [Discussions](https://github.com/aswanidev-vs/persona/discussions)** · **→ [Contributing Guide](../CONTRIBUTING.md)**
