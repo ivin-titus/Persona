@@ -111,7 +111,7 @@ async function renderAccounts() {
       activeAuthuser = activeAccount.authuser;
       document.getElementById('active-email').textContent = activeAccount.email || 'Signed in';
       document.getElementById('active-name').textContent = `Hi, ${activeAccount.name}!`;
-      document.getElementById('active-avatar').src = activeAccount.avatar || 'persona.png';
+      document.getElementById('active-avatar').src = activeAccount.avatar || 'assets/persona.png';
     } else {
       activeAuthuser = null; // Reset if no active session for this domain
       if (accounts.length > 0) {
@@ -119,11 +119,11 @@ async function renderAccounts() {
         const recent = accounts[0];
         document.getElementById('active-name').textContent = "Not Active on this Site";
         document.getElementById('active-email').textContent = `Recently used: ${recent.email || recent.name}`;
-        document.getElementById('active-avatar').src = recent.avatar || 'persona.png';
+        document.getElementById('active-avatar').src = recent.avatar || 'assets/persona.png';
       } else {
         document.getElementById('active-name').textContent = "No Accounts Saved";
         document.getElementById('active-email').textContent = "Sign in to a website to begin";
-        document.getElementById('active-avatar').src = 'persona.png';
+        document.getElementById('active-avatar').src = 'assets/persona.png';
       }
     }
 
