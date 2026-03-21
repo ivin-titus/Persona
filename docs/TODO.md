@@ -129,7 +129,7 @@ Short rationale for non-obvious choices, so new contributors don't re-litigate t
 3. For security fixes — assign yourself and open a draft PR early
 
 **→ [Full contributing guide](../CONTRIBUTING.md)**  
-**→ [Issue tracker](https://github.com/aswanidev-vs/persona/persona/issues)**
+**→ [Issue tracker](https://github.com/aswanidev-vs/persona/issues)**
 
 ---
 
