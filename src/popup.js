@@ -145,7 +145,7 @@ async function renderAccounts() {
         const el = document.createElement('div');
         el.className = 'account-item';
         
-        const avatarSrc = acc.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(acc.name)}&background=random&size=32`;
+        const avatarSrc = acc.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(acc.name)}&background=random&size=64`;
 
         const img = document.createElement('img');
         img.src = avatarSrc;
@@ -224,6 +224,7 @@ async function autoCaptureProfile() {
 }
 
 async function openAddView() {
+  toggleMainHeader(false);
   document.getElementById('main-view').classList.add('hidden');
   document.getElementById('add-view').classList.remove('hidden');
 
@@ -277,6 +278,7 @@ async function openAddView() {
 }
 
 function showMainView() {
+  toggleMainHeader(true);
   document.getElementById('add-view').classList.add('hidden');
   document.getElementById('main-view').classList.remove('hidden');
   document.getElementById('input-name').value = '';
@@ -390,9 +392,19 @@ async function renderProfiles() {
       statusBadge.className = `profile-status-badge ${profile.isHibernated ? 'hibernated' : 'active'}`;
       statusBadge.textContent = profile.isHibernated ? 'Hibernated' : 'Active';
 
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'profile-delete-btn';
+      deleteBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>';
+      deleteBtn.title = 'Delete workspace';
+      deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        quickDeleteProfile(profile.id, profile.name);
+      });
+
       el.appendChild(icon);
       el.appendChild(info);
       el.appendChild(statusBadge);
+      el.appendChild(deleteBtn);
 
       el.addEventListener('click', () => openProfileDetails(profile.id));
       listEl.appendChild(el);
@@ -415,6 +427,7 @@ async function renderProfiles() {
  * Open create profile view
  */
 async function openCreateProfileView() {
+  toggleMainHeader(false);
   document.getElementById('main-view').classList.add('hidden');
   document.getElementById('create-profile-view').classList.remove('hidden');
 
@@ -441,6 +454,7 @@ async function openCreateProfileView() {
  * Close create profile view
  */
 function closeCreateProfileView() {
+  toggleMainHeader(true);
   document.getElementById('create-profile-view').classList.add('hidden');
   document.getElementById('main-view').classList.remove('hidden');
   document.getElementById('profile-name').value = '';
@@ -513,6 +527,7 @@ async function saveProfile() {
  */
 async function openProfileDetails(profileId) {
   currentProfileId = profileId;
+  toggleMainHeader(false);
   document.getElementById('main-view').classList.add('hidden');
   document.getElementById('profile-details-view').classList.remove('hidden');
 
@@ -618,6 +633,7 @@ function renderProfileTabs(tabs) {
  * Close profile details view
  */
 function closeProfileDetailsView() {
+  toggleMainHeader(true);
   document.getElementById('profile-details-view').classList.add('hidden');
   document.getElementById('main-view').classList.remove('hidden');
   currentProfileId = null;
@@ -774,6 +790,13 @@ function closeAddTabView() {
   document.getElementById('profile-details-view').classList.remove('hidden');
 }
 
+function toggleMainHeader(show) {
+  const header = document.querySelector('.app-header');
+  if (header) {
+    header.style.display = show ? 'flex' : 'none';
+  }
+}
+
 /**
  * Save tab to profile
  */
@@ -841,6 +864,31 @@ async function removeTabFromProfile(tabIndex) {
   } catch (err) {
     console.error("Remove tab error:", err);
     alert('Failed to remove tab');
+  }
+}
+
+/**
+ * Quick delete profile from list (without opening details)
+ */
+async function quickDeleteProfile(profileId, profileName) {
+  if (!confirm(`Delete workspace "${profileName}"? This action cannot be undone.`)) {
+    return;
+  }
+
+  try {
+    const response = await chrome.runtime.sendMessage({
+      action: "DELETE_PROFILE",
+      payload: { profileId }
+    });
+
+    if (response && response.success) {
+      await renderProfiles();
+    } else {
+      alert('Failed to delete workspace: ' + (response?.error || 'Unknown error'));
+    }
+  } catch (err) {
+    console.error("Quick delete error:", err);
+    alert('Failed to delete workspace');
   }
 }
 

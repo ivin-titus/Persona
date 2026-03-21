@@ -100,44 +100,7 @@ chrome.runtime.onStartup.addListener(async () => {
 
 
 // Listen for messages from Popup
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "SAVE_SESSION") {
-    handleSaveSession(request.payload, sendResponse);
-    return true; 
-  }
-  
-  if (request.action === "SWITCH_SESSION") {
-    handleSwitchSession(request.payload, sendResponse);
-    return true;
-  }
-
-  if (request.action === "GET_ACCOUNTS") {
-    handleGetAccounts(request.payload, sendResponse);
-    return true;
-  }
-
-  if (request.action === "REMOVE_ACCOUNT") {
-    handleRemoveAccount(request.payload, sendResponse);
-    return true;
-  }
-
-  if (request.action === "GET_CURRENT_TAB") {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]) {
-        const domain = getDomainFromUrl(tabs[0].url);
-        sendResponse({ tab: tabs[0], domain: domain, title: tabs[0].title });
-      } else {
-        sendResponse({ error: "No active tab" });
-      }
-    });
-    return true;
-  }
-
-  if (request.action === "CLEAR_DOMAIN_COOKIES") {
-    handleClearCookies(request.payload.domain, sendResponse);
-    return true;
-  }
-});
+// Consolidated into one listener at bottom of file...
 
 async function handleClearCookies(domain, sendResponse) {
   try {
