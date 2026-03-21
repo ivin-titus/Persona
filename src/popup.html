@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Persona - Google Style</title>
+  <title>Persona - Multi Account & Profile Switcher</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -34,9 +34,27 @@
         <button id="btn-manage" class="btn outline rounded-full">Manage your Google Account</button>
       </section>
 
+      <!-- Profiles Section -->
+      <div class="profiles-card-wrapper">
+        <section class="profiles-card">
+          <div class="section-header">
+            <span class="section-title">Workspaces</span>
+            <button id="btn-create-profile" class="icon-btn" title="Create Profile">
+              <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            </button>
+          </div>
+          <div id="profile-list" class="profile-list">
+            <!-- Injected via JS -->
+          </div>
+        </section>
+      </div>
+
       <!-- Accounts Card -->
       <div class="accounts-card-wrapper">
         <section class="accounts-card">
+          <div class="section-header">
+            <span class="section-title">Accounts</span>
+          </div>
           <div id="account-list" class="account-list">
             <!-- Injected via JS -->
           </div>
@@ -84,14 +102,101 @@
       </div>
     </div>
 
-    <!-- Footer -->
-    <!-- <footer class="app-footer">
-      <a href="#">Privacy Policy</a>
-      <span class="dot">•</span>
-      <a href="#">Terms of Service</a>
-    </footer>
-  </div> -->
+    <!-- Create Profile View -->
+    <div id="create-profile-view" class="view-content hidden">
+      <div class="add-header">
+        <button id="btn-cancel-create-profile" class="icon-btn" title="Back">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <span class="view-title">Create Workspace</span>
+      </div>
 
-  <script src="popup.js"></script>
-</body>
+      <div class="form-body">
+        <div class="form-group">
+          <label for="profile-name">Workspace Name</label>
+          <input type="text" id="profile-name" placeholder="e.g. Dev, Work, Personal" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="profile-account">Associated Account</label>
+          <select id="profile-account" class="account-select">
+            <option value="">Select an account...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="save-current-tabs" checked>
+            Save current window tabs
+          </label>
+        </div>
+
+        <button id="btn-save-profile" class="btn primary full-width">Create Workspace</button>
+      </div>
+    </div>
+
+    <!-- Profile Details View -->
+    <div id="profile-details-view" class="view-content hidden">
+      <div class="add-header">
+        <button id="btn-back-profile" class="icon-btn" title="Back">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <span id="profile-details-title" class="view-title">Profile Details</span>
+        <button id="btn-delete-profile" class="icon-btn" title="Delete Profile">
+          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        </button>
+      </div>
+
+      <div class="form-body">
+        <div class="profile-info">
+          <div class="profile-status" id="profile-status">Hibernated</div>
+          <div class="profile-account" id="profile-account-info">Account: --</div>
+        </div>
+
+        <div class="profile-tabs-section">
+          <div class="section-header">
+            <span class="section-title">Tabs</span>
+            <button id="btn-add-tab" class="icon-btn" title="Add Tab">
+              <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            </button>
+          </div>
+          <div id="profile-tabs-list" class="profile-tabs-list">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button id="btn-open-profile" class="btn primary full-width">Open Workspace</button>
+          <button id="btn-save-tabs" class="btn outline full-width">Save Current Tabs</button>
+          <button id="btn-hibernate-profile" class="btn outline full-width">Hibernate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Tab View -->
+    <div id="add-tab-view" class="view-content hidden">
+      <div class="add-header">
+        <button id="btn-cancel-add-tab" class="icon-btn" title="Back">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <span class="view-title">Add Tab</span>
+      </div>
+
+      <div class="form-body">
+        <div class="form-group">
+          <label for="tab-url">URL</label>
+          <input type="url" id="tab-url" placeholder="https://example.com" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="tab-title">Title (optional)</label>
+          <input type="text" id="tab-title" placeholder="Tab title" autocomplete="off">
+        </div>
+
+        <button id="btn-save-tab" class="btn primary full-width">Add Tab</button>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
 </html>

@@ -1,14 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Persona - Multi Account Switcher",
-  "version": "1.0.0",
-  "description": "Switch between multiple accounts on any site easily.",
+  "name": "Persona - Multi Account & Profile Switcher",
+  "version": "2.0.0",
+  "description": "Switch between multiple accounts and manage custom profile workspaces.",
   "permissions": [
     "cookies",
     "storage",
     "tabs",
     "scripting",
-    "activeTab"
+    "activeTab",
+    "windows"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -21,11 +22,37 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Persona Account Switcher",
+    "default_title": "Persona Account & Profile Switcher",
     "default_icon": "assets/persona.png"
   },
   "background": {
     "service_worker": "background.js"
+  },
+  "commands": {
+    "open-profile-1": {
+      "suggested_key": {
+        "default": "Alt+Shift+1"
+      },
+      "description": "Open Profile 1"
+    },
+    "open-profile-2": {
+      "suggested_key": {
+        "default": "Alt+Shift+2"
+      },
+      "description": "Open Profile 2"
+    },
+    "open-profile-3": {
+      "suggested_key": {
+        "default": "Alt+Shift+3"
+      },
+      "description": "Open Profile 3"
+    },
+    "open-profile-4": {
+      "suggested_key": {
+        "default": "Alt+Shift+4"
+      },
+      "description": "Open Profile 4"
+    }
   },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'none';"
