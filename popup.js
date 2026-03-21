@@ -2,6 +2,7 @@ let currentDomain = null;
 let detectedAvatar = null;
 let detectedEmail = null;
 let detectedAuthuser = null;
+let activeAuthuser = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log("Popup loaded, detecting current tab...");
@@ -38,7 +39,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-save')?.addEventListener('click', saveAccount);
     document.getElementById('btn-signout')?.addEventListener('click', signOutAll);
     document.getElementById('btn-manage')?.addEventListener('click', () => {
-      chrome.tabs.create({ url: 'https://myaccount.google.com/' });
+      const url = activeAuthuser !== null ? `https://myaccount.google.com/u/${activeAuthuser}/` : 'https://myaccount.google.com/u/';
+      chrome.tabs.create({ url });
     });
     document.getElementById('btn-google-add')?.addEventListener('click', () => {
       chrome.tabs.create({ url: 'https://accounts.google.com/AddSession' });
@@ -106,19 +108,23 @@ async function renderAccounts() {
     let activeAccount = accounts.find(acc => acc.id === activeId);
     
     if (activeAccount) {
+      activeAuthuser = activeAccount.authuser;
       document.getElementById('active-email').textContent = activeAccount.email || 'Signed in';
       document.getElementById('active-name').textContent = `Hi, ${activeAccount.name}!`;
       document.getElementById('active-avatar').src = activeAccount.avatar || 'persona.png';
-    } else if (accounts.length > 0) {
-      // Fallback: Show the most recent global account as "Available" if none active for this domain
-      const recent = accounts[0];
-      document.getElementById('active-name').textContent = "Not Active on this Site";
-      document.getElementById('active-email').textContent = `Recently used: ${recent.email || recent.name}`;
-      document.getElementById('active-avatar').src = recent.avatar || 'persona.png';
     } else {
-      document.getElementById('active-name').textContent = "No Accounts Saved";
-      document.getElementById('active-email').textContent = "Sign in to a website to begin";
-      document.getElementById('active-avatar').src = 'persona.png';
+      activeAuthuser = null; // Reset if no active session for this domain
+      if (accounts.length > 0) {
+        // Fallback: Show the most recent global account as "Available" if none active for this domain
+        const recent = accounts[0];
+        document.getElementById('active-name').textContent = "Not Active on this Site";
+        document.getElementById('active-email').textContent = `Recently used: ${recent.email || recent.name}`;
+        document.getElementById('active-avatar').src = recent.avatar || 'persona.png';
+      } else {
+        document.getElementById('active-name').textContent = "No Accounts Saved";
+        document.getElementById('active-email').textContent = "Sign in to a website to begin";
+        document.getElementById('active-avatar').src = 'persona.png';
+      }
     }
 
     // List ALL global accounts consistently
