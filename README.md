@@ -1,22 +1,22 @@
-# Persona - Multi-Account Switcher
+# Persona - Multi-Account & Workspace Manager
 
-**Persona** is a browser extension that allows you to save and switch between multiple user accounts on websites (like Google, YouTube, etc.) with a single click. It is primarily built for the Brave browser, as it lacks the direct profile switching feature found in Chrome, but it works on Chrome as well.
+**Persona** is a premium browser extension that allows you to save and switch between multiple user accounts and browsing workspaces with a single click. Originally built for the Brave browser (to provide the missing profile switching feature), it works flawlessly on all Chromium-based browsers (Chrome, Edge, Brave).
 
-It works by capturing the current session cookies and storing them locally. When you switch accounts, it clears the current browser cookies and injects the saved session cookies, effectively logging you into the selected account instantly.
+It works by capturing session cookies and storing them locally. Switching a workspace or account instantly swaps your browser environment, managing both your identity and your open tabs.
 
 ## 🚀 Features
 
-- **Multi-Account Management**: Save multiple profiles for the same website (e.g., "Personal", "Work", "Dev").
-- **One-Click Switching**: Swap between accounts instantly without entering passwords again.
-- **Startup Persistence**: Sessions automatically survive browser restarts, system shutdowns, and even crashes.
+- **Workspace Management**: Organize your work into named contexts (e.g., "Dev", "Work", "Personal"). Each workspace remembers its own tabs.
+- **Multi-Account Switching**: Save multiple profiles for the same website and swap between them instantly.
+- **Premium Glassmorphic UI**: A stunning, modern interface with glassmorphism, soft shadows, and smooth micro-animations.
+- **Smart Hibernation**: Inactive workspaces are "hibernated" to save memory, closing their windows but preserving all tabs for instant restoration.
+- **Startup Persistence**: Sessions and workspaces automatically survive browser restarts and system shutdowns.
+- **Keyboard Shortcuts**: Quick-switch between your top workspaces using `Alt+Shift+1-5`.
 - **Security Hardened**: 
-  - **Anti-XSS**: Refactored UI to eliminate `innerHTML` risks.
-  - **HttpOnly Assistance**: Automatically forces `HttpOnly` and `Secure` flags on authentication tokens during restoration.
-  - **CSRF Protection**: Implements `SameSite: Lax` by default for all injected cookies.
-  - **Strict CSP**: Enforces a strict Content Security Policy to prevent unauthorized script execution.
-- **Privacy Focused**: All data (cookies and tokens) is stored locally on your machine via `chrome.storage.local`. Nothing is sent to external servers.
-- **Material Design**: Clean, user-friendly interface inspired by Google's design system.
-
+  - **Anti-XSS**: Safe DOM manipulation prevents script injection.
+  - **HttpOnly Enforcement**: Automatically secures authentication tokens during restoration.
+  - **CSRF Protection**: Implements `SameSite: Lax` by default.
+- **Privacy First**: All data is stored 100% locally on your machine. No telemetry, no cloud, no tracking.
 
 ## 🛠️ Installation
 
@@ -24,35 +24,26 @@ Since this is a developer extension, you need to load it manually:
 
 1.  Download or clone this repository to a folder on your computer.
 2.  Open your browser and navigate to the extensions page:
-    *   **Chrome**: Enter `chrome://extensions/` in the address bar.
-    *   **Brave**: Enter `brave://extensions/` in the address bar.
-3.  Toggle **Developer mode** in the top-right corner.
-4.  Click the **Load unpacked** button in the top-left.
-5.  Select the **`src/`** directory of this repository.
-6.  The extension icon should appear in your toolbar.
-7.  Pin the extension icon so you can use it.
+    *   **Chrome**: `chrome://extensions/`
+    *   **Brave**: `brave://extensions/`
+3.  Toggle **Developer mode** (top-right).
+4.  Click **Load unpacked** and select the **`src/`** directory of this repository.
 
 ## 📖 How to Use
 
-*(See [docs/VISION.md](./docs/VISION.md) for the project's long-term goals and philosophical direction)*
+### 1. Managing Workspaces
+- Click the **+** icon in the **Workspaces** section to create a new context.
+- Associate the workspace with a saved account and optionally capture your current tabs.
+- Click a workspace to open it in a new window or **Hibernate** it to free up memory.
 
-### 1. Saving an Account
-1.  Log in to a website (e.g., Gmail).
-2.  Click the **Persona** extension icon.
-3.  The extension will attempt to auto-detect your profile.
-4.  If it's your first time, it might auto-save. Otherwise, click **"Add another account"** -> **"Save Account"** to save the current session.
+### 2. Saving Accounts
+- Log in to any website (e.g., Gmail).
+- Open Persona and it will auto-detect your active session.
+- Click **Save Account** to store it globally for use in any workspace.
 
-### 2. Adding a New Account
-1.  Open the extension.
-2.  Click **"Add another account"**.
-3.  Click **"Open Google Sign In"** at the bottom.
-4.  Sign in with your new credentials in the new tab.
-5.  Open the extension again; it will detect the new account and allow you to save it.
-
-### 3. Switching Accounts
-1.  Open the extension.
-2.  Click on any account in the list.
-3.  The page will reload, and you will be logged in as that user.
+### 3. Switching Identities
+- In the **Accounts** section, click any saved account to instantly swap the current tab's identity.
+- The page will reload, and you will be logged in as the selected user.
 
 ## 🔒 Permissions Explained
 

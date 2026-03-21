@@ -4,7 +4,7 @@
 
 This document describes how Persona evolves from its current state to the long-term vision. It is a living document — updated as we learn, not a fixed commitment.
 
-**Current status:** Early prototype. Cookie snapshot/restore working. Core switching loop functional for Google. Security hardening in progress.
+**Current status:** Stabilized MVP. Core switching and Workspace management are fully functional with a Premium Glassmorphic UI.
 
 ---
 
@@ -14,37 +14,24 @@ Each phase has a **goal** (what it unlocks), **scope** (what we build), and **su
 
 ---
 
-## Phase 0 — Stabilize (Current)
-**Goal:** Make what exists actually reliable and safe before anyone else uses it.
-
-This phase is not glamorous. It is mandatory. Shipping a buggy or insecure session manager does lasting reputation damage that no future feature can undo.
+## Phase 0 — Stabilize & Foundation (Completed)
+**Goal:** A reliable, secure, and visually stunning core.
 
 ### Scope
 
-**Security fixes (blocking):**
-- Replace all `innerHTML` usage in popup with DOM API — current code has XSS exposure via scraped avatar URLs
-- Scope `host_permissions` away from `<all_urls>` — enumerate supported domains explicitly, use `chrome.permissions.request()` for user-added sites
-- Add `content_security_policy` to manifest — `script-src 'self'; object-src 'none'`
-- Encrypt cookie blobs before writing to `chrome.storage.local` — AES-GCM via Web Crypto API, key in `chrome.storage.session`
-- Validate and sanitize all data returned from `content.js` before use in UI or storage
-
-**Bug fixes (blocking):**
-- Guard against duplicate `content.js` injection — add page-level sentinel variable
-- Fix `getDomainFromUrl` returning `"google.com"` for `chrome://` internal pages — return `null` and gate all logic on it
-- Scope `signOutAll` to specific storage keys — `chrome.storage.local.clear()` is too broad
-- Replace `setTimeout(1000)` propagation delay with cookie verification polling
-
-**Code quality (non-blocking but in this phase):**
-- Replace module-level mutable state (`activeAuthuser`) with fresh reads at event handler call time
-- Add eTLD+1 resolution via `tldts` — current heuristic breaks on `co.in`, `.io` subdomains, GitHub Pages
-- Use `!= null` instead of `!== null` where both `null` and `undefined` are possible
+**Completed Features:**
+- **Premium UI**: Full glassmorphic redesign with smooth transitions and micro-animations.
+- **Workspace Layer**: Named browsing contexts with tab memory and smart hibernation.
+- **Security Hardening**: Anti-XSS DOM refactor, HttpOnly enforcement, and CSRF protection.
+- **Startup Persistence**: Sessions and workspaces survive browser restarts and shutdowns.
+- **Bug Fixes**: Resolved duplicate header issues and multiple window creation bugs.
 
 ### Success Signal
-Zero known XSS surfaces. Encrypted storage shipped. All blocking bugs resolved. Two developers can use it daily without hitting crashes or data loss.
+Zero known structural bugs. Workspace management is daily-driver ready. All XSS surfaces mitigated.
 
 ---
 
-## Phase 1 — Foundation
+## Phase 1 — Strategy & Intelligence
 **Goal:** A correctly architected codebase that can grow without accumulating debt.
 
 ### Scope
@@ -224,8 +211,10 @@ Registry covers 50+ sites. At least 10 community contributors. PRs reviewed and 
 
 ---
 
-## Phase 6 — The Workspace Layer
-**Goal:** Persona manages not just account switching but entire browsing contexts.
+## Phase 6 — Advanced Intelligence & AI
+**Goal:** Persona auto-detects workflows and suggests optimizations.
+
+*(Previously "The Workspace Layer" — now completed in Phase 0)*
 
 ### Context
 This is the long-term differentiator. Once account switching is reliable, the next layer is **workspace management** — named contexts with their own window, tab memory, and account set. Think of it as Alfred/Raycast for your browser identity.

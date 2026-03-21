@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Profile Workspace System extends Persona's account switching capabilities with a powerful multi-session/workspace management feature. Each profile represents a separate browser environment tied to a specific account, allowing you to organize your work into distinct workspaces.
+The Profile Workspace System extends Persona's account switching capabilities with a powerful multi-session/workspace management feature. Each profile is a distinct workspace with its own window and tab memory, wrapped in a premium glassmorphic interface.
 
 ## Key Features
 
@@ -296,7 +296,7 @@ Update the account associated with a profile.
 ### Hibernating a Profile
 
 1. Click on a profile to open its details
-2. Click "Hibernate"
+2. Click the "Hibernate" button (top right icon)
 3. The profile window will close
 4. State is saved for later restoration
 

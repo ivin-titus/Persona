@@ -99,6 +99,12 @@ Not blocking current work, but queued for the next sprint.
 
 ## ✅ Recently Completed
 
+- ✅ **Premium Glassmorphic UI redesign implemented.**
+- ✅ **Workspace & Profile Management system completed.**
+- ✅ **Fixed duplicate 'onMessage' listener bug (Double window creation).**
+- ✅ **Fixed double-header issue in sub-views.**
+- ✅ **Fixed blank space above sub-view headers.**
+- ✅ **Removed container margins for edge-to-edge popup experience.**
 - ✅ Cookie merge strategy (non-destructive switch) — avoids logging out Google multi-login sessions
 - ✅ `authuser` index detection from URL params and `/u/N` path patterns
 - ✅ `autoCaptureProfile` — deduplication by email before auto-save
