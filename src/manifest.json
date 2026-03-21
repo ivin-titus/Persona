@@ -14,15 +14,15 @@
     "<all_urls>"
   ],
   "icons": {
-    "16": "persona.png",
-    "32": "persona.png",
-    "48": "persona.png",
-    "128": "persona.png"
+    "16": "assets/persona.png",
+    "32": "assets/persona.png",
+    "48": "assets/persona.png",
+    "128": "assets/persona.png"
   },
   "action": {
     "default_popup": "popup.html",
     "default_title": "Persona Account Switcher",
-    "default_icon": "persona.png"
+    "default_icon": "assets/persona.png"
   },
   "background": {
     "service_worker": "background.js"
