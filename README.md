@@ -28,11 +28,13 @@ Since this is a developer extension, you need to load it manually:
     *   **Brave**: Enter `brave://extensions/` in the address bar.
 3.  Toggle **Developer mode** in the top-right corner.
 4.  Click the **Load unpacked** button in the top-left.
-5.  Select the folder where you saved the extension files.
+5.  Select the **`src/`** directory of this repository.
 6.  The extension icon should appear in your toolbar.
 7.  Pin the extension icon so you can use it.
 
 ## 📖 How to Use
+
+*(See [docs/VISION.md](./docs/VISION.md) for the project's long-term goals and philosophical direction)*
 
 ### 1. Saving an Account
 1.  Log in to a website (e.g., Gmail).
@@ -54,6 +56,7 @@ Since this is a developer extension, you need to load it manually:
 
 ## 🔒 Permissions Explained
 
+*(For a deep dive into our threat model, read [docs/SECURITY.md](./docs/SECURITY.md))*
 
 This extension requires specific permissions to function:
 
@@ -63,15 +66,25 @@ This extension requires specific permissions to function:
 - **`scripting`**: Used to safely inject a script into the page to scrape the user's name and avatar for the UI.
 - **`<all_urls>`**: Required to allow the extension to switch accounts on any website. This is hardened with a strict **Content Security Policy** and **HttpOnly Flag Assistance** to prevent session theft.
 
-
 ## 📂 Project Structure
 
-- **`manifest.json`**: Configuration file defining permissions and entry points.
-- **`background.js`**: Service worker that handles the heavy lifting—saving cookies, clearing cookies, and swapping sessions.
-- **`popup.html` / `popup.js` / `popup.css`**: The user interface.
-- **`content.js`**: Script that runs on the web page to extract profile info (Avatar, Name, Email).
+- **`src/`**: Contains the source code for the extension.
+  - **`manifest.json`**: Configuration file defining permissions and entry points.
+  - **`background.js`**: Service worker that handles the heavy lifting—saving cookies, clearing cookies, and swapping sessions.
+  - **`popup.*`**: The user interface.
+  - **`content.js`**: Script that runs on the web page to extract profile info.
+  - **`assets/`**: Static assets like icons.
+- **`docs/`**: Project documentation, active bug lists, and security policies.
+  - **`ROADMAP.md`**: What's coming next!
+  - **`SECURITY.md`**: Threat models and reporting.
+  - **`TODO.md`**: Active development tasks and logs.
+  - **`VISION.md`**: Project scope and aspirations.
+- **`CONTRIBUTING.md`**: Guidelines for external contributors.
+- **`CODE_OF_CONDUCT.md`**: Community standards.
 
+## 🤝 Contributing
 
+We welcome community contributions! Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) to get started. Be sure to review the [TODO.md](./docs/TODO.md) to claim an unassigned issue. Use our established [Code of Conduct](./CODE_OF_CONDUCT.md) when interacting with the community.
 
 ## ⚠️ Disclaimer
 
