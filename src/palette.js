@@ -145,15 +145,23 @@ async function executeItem(item) {
     chrome.tabs.create({ url: 'https://accounts.google.com/AddSession' });
     window.close();
   } else if (item.id === 'create-workspace') {
-    // This usually needs the popup open, but we can signal it
-    chrome.action.openPopup();
+    // Try standard popup first, fallback to focused window
+    try {
+      await chrome.action.openPopup();
+    } catch (e) {
+      await chrome.runtime.sendMessage({ action: "OPEN_FOCUSED_POPUP", payload: { mode: "create" } });
+    }
     window.close();
   } else if (item.id === 'sign-out-all') {
     if (confirm('Sign out from all extension sessions?')) {
       chrome.storage.local.clear(() => window.close());
     }
   } else if (item.id === 'go-home') {
-    chrome.action.openPopup();
+    try {
+      await chrome.action.openPopup();
+    } catch (e) {
+      await chrome.runtime.sendMessage({ action: "OPEN_FOCUSED_POPUP", payload: { mode: "dashboard" } });
+    }
     window.close();
   }
 }

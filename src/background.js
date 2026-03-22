@@ -690,6 +690,27 @@ chrome.commands.onCommand.addListener(async (command) => {
     openCenteredPopup('switcher.html', 650, 480);
   } else if (command === 'open-command-palette') {
     openCenteredPopup('palette.html', 650, 520);
+  } else if (command === 'default-workspace' || command === 'open-profile-1') {
+    console.log('Shortcut received:', command);
+    const profiles = await getProfiles();
+    
+    // Try marked default first
+    let profileToOpen = profiles.find(p => p.isDefault);
+    
+    // Fallback: if no default, open first profile (Legacy Behavior)
+    if (!profileToOpen && profiles.length > 0) {
+      console.log('No default set, falling back to first profile');
+      profileToOpen = profiles[0];
+    }
+
+    if (profileToOpen) {
+      console.log('Opening workspace:', profileToOpen.name);
+      await handleOpenProfile({ profileId: profileToOpen.id }, (response) => {
+        console.log('Open success:', response.success);
+      });
+    } else {
+      console.log('No workspaces available to open.');
+    }
   }
 });
 
@@ -813,6 +834,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.action === "TOGGLE_DEFAULT_PROFILE") {
     handleToggleDefaultProfile(request.payload, sendResponse);
+    return true;
+  }
+
+  if (request.action === "OPEN_FOCUSED_POPUP") {
+    const url = request.payload?.mode === 'create' ? 'popup.html?mode=create' : 'popup.html';
+    openCenteredPopup(url, 400, 600);
+    sendResponse({ success: true });
     return true;
   }
 });

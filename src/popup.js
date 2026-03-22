@@ -48,6 +48,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     document.getElementById('btn-close')?.addEventListener('click', () => window.close());
     
+    // Add Esc key listener to close popup
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') window.close();
+    });
+
+    // Check for creation mode from palette/fallback
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'create') {
+      setTimeout(openCreateProfileView, 100);
+    }
+    
   } catch (error) {
     clearTimeout(tabDetectionTimeout);
     console.error("Tab detection failed:", error);
@@ -430,7 +441,7 @@ async function renderProfiles() {
     if (profiles.length > 0) {
       const shortcutHint = document.createElement('div');
       shortcutHint.className = 'shortcut-hint';
-      shortcutHint.innerHTML = `Tip: <kbd>Alt+Shift+1-3</kbd>: Switch | <kbd>Alt+C</kbd>: Hibernate`;
+      shortcutHint.innerHTML = `Tip: <kbd>Alt+Shift+1</kbd>: Default | <kbd>Alt+C</kbd>: Hibernate`;
       listEl.appendChild(shortcutHint);
     }
 

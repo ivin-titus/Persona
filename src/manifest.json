@@ -29,11 +29,11 @@
     "service_worker": "background.js"
   },
   "commands": {
-    "default-workspace": {
+    "open-profile-1": {
       "suggested_key": {
         "default": "Alt+Shift+1"
       },
-      "description": "default-workspace"
+      "description": "Open Default Workspace"
     },
     "hibernate-active-profile": {
       "suggested_key": {
