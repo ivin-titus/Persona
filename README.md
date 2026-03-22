@@ -7,13 +7,18 @@ It works by capturing session cookies and storing them locally. Switching a work
 ## 🚀 Features
 
 - **Workspace Management**: Organize your work into named contexts (e.g., "Dev", "Work", "Personal"). Each workspace remembers its own tabs.
+- **Default Workspace**: Tag a specific workspace as "Default" to open it instantly via shortcut.
+- **Workspace Switcher**: A Raycast-style modal (`Alt+Shift+D`) for fuzzy searching and switching between workspaces with arrow keys.
+- **Command Palette**: A global palette (`Alt+Shift+S`) to search across all open tabs in all workspaces and execute actions like "Add Account" or "Sign Out All".
 - **Multi-Account Switching**: Save multiple profiles for the same website and swap between them instantly.
 - **Premium Glassmorphic UI**: A stunning, modern interface with glassmorphism, soft shadows, and smooth micro-animations.
 - **Smart Hibernation**: Inactive workspaces are "hibernated" to save memory, closing their windows but preserving all tabs for instant restoration.
-- **Startup Persistence**: Sessions and workspaces automatically survive browser restarts and system shutdowns.
 - **Keyboard Shortcuts**: 
-  - `Alt+Shift+1-3`: Quick-switch between your top 3 workspaces.
-  - `Alt+C`: Hibernate the active workspace window instantly.
+  - `Alt+Shift+1`: Open the **Default** workspace (or first workspace if no default set).
+  - `Alt+Shift+D`: Open the **Workspace Switcher**.
+  - `Alt+Shift+S`: Open the **Command Palette**.
+  - `Alt+C`: **Hibernate** the active workspace window instantly.
+  - `Esc`: Close any open Persona modal (Switcher/Palette/Dashboard).
 - **Security Hardened**: 
   - **Anti-XSS**: Safe DOM manipulation prevents script injection.
   - **HttpOnly Enforcement**: Automatically secures authentication tokens during restoration.

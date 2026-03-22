@@ -441,7 +441,7 @@ async function renderProfiles() {
     if (profiles.length > 0) {
       const shortcutHint = document.createElement('div');
       shortcutHint.className = 'shortcut-hint';
-      shortcutHint.innerHTML = `Tip: <kbd>Alt+Shift+1</kbd>: Default | <kbd>Alt+C</kbd>: Hibernate`;
+      shortcutHint.innerHTML = `Tip: Default: <kbd>Alt+Shift+1</kbd> | Switcher: <kbd>Alt+Shift+D</kbd> | Palette: <kbd>Alt+Shift+S</kbd> | Hibernate: <kbd>Alt+C</kbd>`;
       listEl.appendChild(shortcutHint);
     }
 

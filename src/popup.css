@@ -906,21 +906,22 @@ body {
 
 /* Keyboard Shortcut Hint */
 .shortcut-hint {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-tertiary);
-  padding: 12px 16px;
+  padding: 10px 12px;
   text-align: center;
   border-top: 1px solid var(--border-light);
   background: var(--bg-subtle);
+  line-height: 1.5;
 }
 
 .shortcut-hint kbd {
   background: white;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  padding: 2px 6px;
+  padding: 1px 4px;
   font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-secondary);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
