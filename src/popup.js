@@ -414,7 +414,7 @@ async function renderProfiles() {
     if (profiles.length > 0) {
       const shortcutHint = document.createElement('div');
       shortcutHint.className = 'shortcut-hint';
-      shortcutHint.innerHTML = `Tip: Use <kbd>Alt+Shift+1-5</kbd> to quick-switch`;
+      shortcutHint.innerHTML = `Tip: <kbd>Alt+Shift+1-3</kbd>: Switch | <kbd>Alt+C</kbd>: Hibernate`;
       listEl.appendChild(shortcutHint);
     }
 

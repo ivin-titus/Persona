@@ -47,11 +47,11 @@
       },
       "description": "Open Profile 3"
     },
-    "open-profile-4": {
+    "hibernate-active-profile": {
       "suggested_key": {
-        "default": "Alt+Shift+4"
+        "default": "Alt+C"
       },
-      "description": "Open Profile 4"
+      "description": "Hibernate Active Workspace"
     }
   },
   "content_security_policy": {

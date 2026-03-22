@@ -684,6 +684,39 @@ chrome.commands.onCommand.addListener(async (command) => {
         }
       });
     }
+  } else if (command === 'hibernate-active-profile') {
+    try {
+      // Get the currently focused window to identify which profile is active
+      // Use windowTypes: ['normal'] to avoid picking up the extension's own popup or other special windows
+      const currentWindow = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
+      
+      if (!currentWindow || currentWindow.id === chrome.windows.WINDOW_ID_NONE) {
+        console.log('No active normal window found for hibernation.');
+        return;
+      }
+
+      console.log('Shortcut triggered. Current Window ID:', currentWindow.id);
+
+      const profiles = await getProfiles();
+      const activeProfile = profiles.find(p => p.windowId === currentWindow.id);
+
+      if (activeProfile) {
+        console.log('Hibernating active profile via shortcut:', activeProfile.name);
+        // Call the internal handler directly to skip message passing overhead
+        await handleHibernateProfile({ profileId: activeProfile.id }, (response) => {
+          if (response.success) {
+            console.log('Profile hibernated successfully via shortcut.');
+          }
+        });
+      } else {
+        console.log('This window is not associated with any active workspace profile.');
+        
+        // Fallback: If no window match, check if the window was actually opened by us but ID lost
+        // (Less likely, but for robustness)
+      }
+    } catch (error) {
+      console.error('Error during hibernate shortcut execution:', error);
+    }
   }
 });
 

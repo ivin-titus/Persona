@@ -11,7 +11,9 @@ It works by capturing session cookies and storing them locally. Switching a work
 - **Premium Glassmorphic UI**: A stunning, modern interface with glassmorphism, soft shadows, and smooth micro-animations.
 - **Smart Hibernation**: Inactive workspaces are "hibernated" to save memory, closing their windows but preserving all tabs for instant restoration.
 - **Startup Persistence**: Sessions and workspaces automatically survive browser restarts and system shutdowns.
-- **Keyboard Shortcuts**: Quick-switch between your top workspaces using `Alt+Shift+1-5`.
+- **Keyboard Shortcuts**: 
+  - `Alt+Shift+1-3`: Quick-switch between your top 3 workspaces.
+  - `Alt+C`: Hibernate the active workspace window instantly.
 - **Security Hardened**: 
   - **Anti-XSS**: Safe DOM manipulation prevents script injection.
   - **HttpOnly Enforcement**: Automatically secures authentication tokens during restoration.
