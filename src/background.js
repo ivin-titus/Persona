@@ -672,53 +672,53 @@ chrome.windows.onRemoved.addListener(async (windowId) => {
 
 // Listen for keyboard shortcuts
 chrome.commands.onCommand.addListener(async (command) => {
-  if (command.startsWith('open-profile-')) {
-    const profileIndex = parseInt(command.replace('open-profile-', '')) - 1;
-    const profiles = await getProfiles();
-    
-    if (profileIndex >= 0 && profileIndex < profiles.length) {
-      const profile = profiles[profileIndex];
-      await handleOpenProfile({ profileId: profile.id }, (response) => {
-        if (response.success) {
-          console.log('Profile opened via shortcut:', profile.name);
-        }
-      });
-    }
-  } else if (command === 'hibernate-active-profile') {
+  if (command === 'hibernate-active-profile') {
     try {
-      // Get the currently focused window to identify which profile is active
-      // Use windowTypes: ['normal'] to avoid picking up the extension's own popup or other special windows
       const currentWindow = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
-      
-      if (!currentWindow || currentWindow.id === chrome.windows.WINDOW_ID_NONE) {
-        console.log('No active normal window found for hibernation.');
-        return;
-      }
-
-      console.log('Shortcut triggered. Current Window ID:', currentWindow.id);
+      if (!currentWindow || currentWindow.id === chrome.windows.WINDOW_ID_NONE) return;
 
       const profiles = await getProfiles();
       const activeProfile = profiles.find(p => p.windowId === currentWindow.id);
 
       if (activeProfile) {
-        console.log('Hibernating active profile via shortcut:', activeProfile.name);
-        // Call the internal handler directly to skip message passing overhead
-        await handleHibernateProfile({ profileId: activeProfile.id }, (response) => {
-          if (response.success) {
-            console.log('Profile hibernated successfully via shortcut.');
-          }
-        });
-      } else {
-        console.log('This window is not associated with any active workspace profile.');
-        
-        // Fallback: If no window match, check if the window was actually opened by us but ID lost
-        // (Less likely, but for robustness)
+        await handleHibernateProfile({ profileId: activeProfile.id }, (response) => {});
       }
     } catch (error) {
       console.error('Error during hibernate shortcut execution:', error);
     }
+  } else if (command === 'open-workspace-switcher') {
+    openCenteredPopup('switcher.html', 650, 480);
+  } else if (command === 'open-command-palette') {
+    openCenteredPopup('palette.html', 650, 520);
   }
 });
+
+/**
+ * Helper to open a centered popup window
+ */
+function openCenteredPopup(url, width, height) {
+  // We can't easily get screen metrics in SW without manifest permissions, 
+  // so we'll use reasonable defaults or try to get current window metrics.
+  chrome.windows.getLastFocused((win) => {
+    let left = 100;
+    let top = 100;
+    
+    if (win) {
+      left = Math.round(win.left + (win.width - width) / 2);
+      top = Math.round(win.top + (win.height - height) / 2);
+    }
+
+    chrome.windows.create({
+      url: url,
+      type: 'popup',
+      width: width,
+      height: height,
+      left: left,
+      top: top,
+      focused: true
+    });
+  });
+}
 
 // Add profile-related message handlers to existing listener
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -810,4 +810,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     handleUpdateProfileAccount(request.payload, sendResponse);
     return true;
   }
+
+  if (request.action === "TOGGLE_DEFAULT_PROFILE") {
+    handleToggleDefaultProfile(request.payload, sendResponse);
+    return true;
+  }
 });
+
+/**
+ * Toggle default status for a profile
+ */
+async function handleToggleDefaultProfile(payload, sendResponse) {
+  try {
+    const { profileId } = payload;
+    const profiles = await getProfiles();
+    
+    profiles.forEach(p => {
+      if (p.id === profileId) {
+        p.isDefault = !p.isDefault;
+      } else if (p.isDefault) {
+        // Ensure only one is default
+        p.isDefault = false;
+      }
+    });
+
+    await saveProfiles(profiles);
+    sendResponse({ success: true, profiles });
+  } catch (error) {
+    console.error('Toggle default failed:', error);
+    sendResponse({ success: false, error: error.message });
+  }
+}

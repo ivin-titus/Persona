@@ -669,6 +669,35 @@ body {
   color: var(--text-tertiary);
 }
 
+.profile-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  opacity: 0;
+}
+
+.profile-item:hover .profile-action-btn {
+  opacity: 1;
+}
+
+.profile-action-btn:hover {
+  background: var(--bg-hover);
+  color: var(--primary);
+}
+
+.profile-action-btn.is-default {
+  opacity: 1;
+  color: var(--warning);
+}
+
 .profile-delete-btn {
   background: none;
   border: none;

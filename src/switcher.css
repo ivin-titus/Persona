@@ -1,0 +1,193 @@
+:root {
+  --bg-color: #1a1a1a;
+  --bg-glass: rgba(26, 26, 26, 0.95);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: #aaaaaa;
+  --accent-color: #4c8bf5;
+  --accent-hover: #3b7ad9;
+  --item-bg-hover: rgba(255, 255, 255, 0.05);
+  --item-bg-active: rgba(255, 255, 255, 0.1);
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-color);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.switcher-container {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  color: var(--text-secondary);
+}
+
+#switcher-search {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+#switcher-search::placeholder {
+  color: var(--text-secondary);
+}
+
+.switcher-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.switcher-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  user-select: none;
+}
+
+.switcher-item:hover {
+  background: var(--item-bg-hover);
+}
+
+.switcher-item.selected {
+  background: var(--item-bg-active);
+  border-left: 3px solid var(--accent-color);
+  padding-left: 17px;
+}
+
+.profile-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: 16px;
+  background: linear-gradient(135deg, #4c8bf5, #3b7ad9);
+  color: white;
+}
+
+.profile-icon.hibernated {
+  background: #444;
+  color: #888;
+}
+
+.profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.profile-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.profile-tag {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.tag-default {
+  background: rgba(76, 139, 245, 0.15);
+  color: #4c8bf5;
+}
+
+.tag-active {
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+}
+
+.switcher-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.shortcut-info {
+  display: flex;
+  gap: 16px;
+}
+
+kbd {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: inherit;
+  color: white;
+}
+
+.brand {
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  opacity: 0.5;
+}
+/* Scrollbar Styling */
+.switcher-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.switcher-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.switcher-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.switcher-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

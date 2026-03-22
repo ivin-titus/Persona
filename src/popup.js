@@ -392,6 +392,20 @@ async function renderProfiles() {
       statusBadge.className = `profile-status-badge ${profile.isHibernated ? 'hibernated' : 'active'}`;
       statusBadge.textContent = profile.isHibernated ? 'Hibernated' : 'Active';
 
+      const controls = document.createElement('div');
+      controls.style.display = 'flex';
+      controls.style.gap = '8px';
+      controls.style.marginLeft = 'auto';
+
+      const defaultBtn = document.createElement('button');
+      defaultBtn.className = `profile-action-btn ${profile.isDefault ? 'is-default' : ''}`;
+      defaultBtn.innerHTML = profile.isDefault ? '★' : '☆';
+      defaultBtn.title = profile.isDefault ? 'Default Workspace' : 'Set as Default';
+      defaultBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDefaultProfile(profile.id);
+      });
+
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'profile-delete-btn';
       deleteBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>';
@@ -404,7 +418,9 @@ async function renderProfiles() {
       el.appendChild(icon);
       el.appendChild(info);
       el.appendChild(statusBadge);
-      el.appendChild(deleteBtn);
+      el.appendChild(controls);
+      controls.appendChild(defaultBtn);
+      controls.appendChild(deleteBtn);
 
       el.addEventListener('click', () => openProfileDetails(profile.id));
       listEl.appendChild(el);
@@ -864,6 +880,26 @@ async function removeTabFromProfile(tabIndex) {
   } catch (err) {
     console.error("Remove tab error:", err);
     alert('Failed to remove tab');
+  }
+}
+
+/**
+ * Toggle default status for a profile
+ */
+async function toggleDefaultProfile(profileId) {
+  try {
+    const response = await chrome.runtime.sendMessage({
+      action: "TOGGLE_DEFAULT_PROFILE",
+      payload: { profileId }
+    });
+
+    if (response && response.success) {
+      await renderProfiles();
+    } else {
+      console.error("Failed to toggle default profile:", response?.error);
+    }
+  } catch (err) {
+    console.error("Toggle default error:", err);
   }
 }
 
