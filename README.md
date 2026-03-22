@@ -76,6 +76,7 @@ This extension requires specific permissions to function:
   - **`ROADMAP.md`**: What's coming next!
   - **`SECURITY.md`**: Threat models and reporting.
   - **`TODO.md`**: Active development tasks and logs.
+  - **`timeline.md`**: Project history and major update logs.
   - **`VISION.md`**: Project scope and aspirations.
 - **`CONTRIBUTING.md`**: Guidelines for external contributors.
 - **`CODE_OF_CONDUCT.md`**: Community standards.
